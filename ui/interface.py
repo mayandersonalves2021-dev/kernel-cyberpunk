@@ -6,7 +6,6 @@ definida em `core/` e `engine/jogo.py`.
 """
 
 import random
-import sys
 import time
 
 from rich import box
@@ -246,7 +245,7 @@ class InterfaceCyberpunk:
         )
         time.sleep(0.5)
 
-    def efeito_matrix(self, operacao: str, duracao: float = 3.2) -> None:
+    def efeito_matrix(self, operacao: str, duracao: float = 1.0) -> None:
         """Exibe fluxo animado em tela cheia com códigos hexadecimais e binários verdes."""
         hex_tokens = [
             "0x7FF4", "0xDEAD", "0x00A1", "0xC0DE", "0xBEEF",
