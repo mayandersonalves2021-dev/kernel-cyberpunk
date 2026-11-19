@@ -246,64 +246,47 @@ class InterfaceCyberpunk:
         )
         time.sleep(0.5)
 
-    def efeito_matrix(self, operacao: str, duracao: float = 2.5) -> None:
-        """Exibe chuva digital Matrix em tela cheia com hexadecimais e binários caindo."""
-        tokens_todos = (
-            "0x7FF4", "0xDEAD", "0x00A1", "0x8B2F", "0xC0DE", "0xBEEF",
+    def efeito_matrix(self, operacao: str, duracao: float = 3.2) -> None:
+        """Exibe fluxo animado em tela cheia com códigos hexadecimais e binários verdes."""
+        hex_tokens = [
+            "0x7FF4", "0xDEAD", "0x00A1", "0xC0DE", "0xBEEF",
             "0x00FF", "0x8086", "0xCAFE", "0x1337", "0xFA12",
-            "010110", "110010", "101001", "001111", "111000", "011011",
-        )
+        ]
+        bin_tokens = ["010110", "110010", "101001", "001111", "111000", "011011"]
 
         largura_total = max(40, self.console.width)
-        altura_conteudo = max(10, self.console.height - 4)
+        altura_painel = max(12, self.console.height - 2)
+        altura_interna = max(8, altura_painel - 2)
         largura_interna = max(24, largura_total - 4)
-        num_colunas = max(3, largura_interna // 8)
-        total_frames = max(25, min(32, int(round(duracao / 0.08))))
+        tokens_por_linha = max(3, (largura_interna + 2) // 8)
 
-        colunas = []
-        for _ in range(num_colunas):
-            colunas.append(
-                {
-                    "y": self._rng.randint(-altura_conteudo, altura_conteudo - 1),
-                    "cauda": self._rng.randint(4, max(5, altura_conteudo // 2)),
-                    "tokens": [
-                        self._rng.choice(tokens_todos) for _ in range(altura_conteudo)
-                    ],
-                }
-            )
+        def _gerar_linha() -> str:
+            partes = []
+            for _ in range(tokens_por_linha):
+                if self._rng.random() < 0.6:
+                    partes.append(self._rng.choice(hex_tokens))
+                else:
+                    partes.append(self._rng.choice(bin_tokens))
+            return "  ".join(partes)
+
+        linhas_tela = [_gerar_linha() for _ in range(altura_interna)]
+        inicio = time.perf_counter()
 
         self.limpar_tela()
         with Live(
-            console=self.console, refresh_per_second=15, screen=True, transient=True
+            console=self.console, refresh_per_second=14, screen=True, transient=True
         ) as live:
-            for _ in range(total_frames):
+            while (time.perf_counter() - inicio) < duracao:
+                linhas_tela.append(_gerar_linha())
+                if len(linhas_tela) > altura_interna:
+                    linhas_tela.pop(0)
+
                 texto_matrix = Text()
-                for linha_idx in range(altura_conteudo):
-                    for col_idx in range(num_colunas):
-                        gota = colunas[col_idx]
-                        dist = gota["y"] - linha_idx
-                        if dist == 0:
-                            token = gota["tokens"][linha_idx]
-                            estilo = "bold bright_white"
-                        elif 1 <= dist <= 2:
-                            token = gota["tokens"][linha_idx]
-                            estilo = "bold bright_green"
-                        elif 3 <= dist <= (gota["cauda"] // 2 + 2):
-                            token = gota["tokens"][linha_idx]
-                            estilo = "green"
-                        elif 0 < dist <= gota["cauda"]:
-                            token = gota["tokens"][linha_idx]
-                            estilo = "dim cyan"
-                        else:
-                            token = "      "
-                            estilo = "green"
-
-                        texto_matrix.append(token, style=estilo)
-                        if col_idx < num_colunas - 1:
-                            texto_matrix.append("  ")
-
-                    if linha_idx < altura_conteudo - 1:
-                        texto_matrix.append("\n")
+                total_linhas = len(linhas_tela)
+                for idx, linha in enumerate(linhas_tela):
+                    estilo = "bold bright_green" if idx >= total_linhas - 2 else "green"
+                    sufixo = "\n" if idx < total_linhas - 1 else ""
+                    texto_matrix.append(linha + sufixo, style=estilo)
 
                 painel = Panel(
                     Align.center(texto_matrix),
@@ -311,21 +294,9 @@ class InterfaceCyberpunk:
                     border_style="bright_green",
                     box=box.SQUARE,
                     width=largura_total,
-                    height=altura_conteudo + 2,
+                    height=altura_painel,
                 )
                 live.update(painel)
-
-                # Avança cada gota verticalmente de cima para baixo
-                for gota in colunas:
-                    gota["y"] += 1
-                    if 0 <= gota["y"] < altura_conteudo:
-                        gota["tokens"][gota["y"]] = self._rng.choice(tokens_todos)
-                    if gota["y"] - gota["cauda"] >= altura_conteudo:
-                        gota["y"] = self._rng.randint(-6, -1)
-                        gota["cauda"] = self._rng.randint(
-                            4, max(5, altura_conteudo // 2)
-                        )
-
                 time.sleep(0.08)
 
         self.limpar_tela()
