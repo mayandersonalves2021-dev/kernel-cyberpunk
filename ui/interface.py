@@ -84,31 +84,44 @@ CADEADO_QUEBRADO = r"""
 """
 
 CAVEIRA_HACKER = r'''
-          .-""""""-.
-        .'          '.
-       /   O      O   \
-      :                :
-      |                |
-      :    .------.    :
-       \  '  ||||  '  /
-        '.  '----'  .'
-          '-......-'
-      [ ROOTKIT :: 0xDEAD ]
+             .-------------.
+           .'   _________   '.
+          /   .'         '.   \
+         |   |  |\       /|  |   |
+         |   |  |##\   /##|  |   |
+         |   |  '---' '---'  |   |
+         |   |      /^\      |   |
+         |   \     /___\     /   |
+     __   \   '._ | | | | _.'   /   __
+    /  \___\     |_|_|_|_|     /___/  \
+    \__     '.    '-----'    .'     __/
+       \______\    \   /    /______/
+               \_____X_____/
+       ________/   /   \   \________
+      (___        /     \        ___)
+           [ ROOTKIT :: 0xDEAD ]
 '''
 
-ESCUDO_CIBERNETICO = r"""
-       /\==================================/\
-      /  \    KERNEL SHIELD :: ATIVO     /  \
-     |    \=============================/    |
-     |     |   ____  _  _  ____  _     |     |
-     |     |  / ___|| || ||  _ \| |    |     |
-     |     |  \___ \| || || | | | |    |     |
-      \    |   ___) |__   __| |_| | |___ \   /
-       \   |  |____/   |_|  |____/|_____|  /
-        \  |       [ INTEGRIDADE OK ]     /
-         \ \=============================/
-          \_____________________________/
-"""
+ESCUDO_CIBERNETICO = r'''
+      .==============================.
+    .'  .==========================.  '.
+   /   /           |  |           \   \
+  |   |            |  |            |   |
+  |   |   KERNEL SHIELD :: ATIVO   |   |
+  |   | ===========+  +=========== |   |
+  |   | ===========+  +=========== |   |
+  |   |            |  |            |   |
+   \   \    [ INTEGRIDADE OK ]    /   /
+    \   \          |  |          /   /
+     \   '.        |  |        .'   /
+      \    '.      |  |      .'    /
+       '.    '.    |  |    .'    .'
+         '.    '.  \  /  .'    .'
+           '.    '. \/ .'    .'
+             '.    '..'    .'
+               '._      _.'
+                  '.__.'
+'''
 
 BANNER_KERNEL_PANIC = r"""
  _  __ _____ ____  _   _ _____ _       ____   _    _   _ ___ ____ 
@@ -178,7 +191,6 @@ class InterfaceCyberpunk:
             (CADEADO_FECHADO, "bold cyan", "[ VERIFICANDO PORTA 0x80 :: SEGURO ]", "cyan"),
             (CADEADO_TRINCANDO, "bold yellow", "[ ! ALERTA: TENTATIVA DE QUEBRA NA PORTA 0x80 ! ]", "yellow"),
             (CADEADO_QUEBRADO, "bold red", "[ INTRUSÃO DETECTADA NA PORTA 0x80 ]", "bright_red"),
-            (CADEADO_QUEBRADO, "bold yellow", "[ INTRUSÃO DETECTADA NA PORTA 0x80 ]", "bright_yellow"),
         ]
         with Live(console=self.console, refresh_per_second=8, transient=True) as live:
             for arte, cor_arte, aviso, cor_borda in quadros_cadeado:
@@ -190,9 +202,9 @@ class InterfaceCyberpunk:
                 live.update(
                     Panel(bloco, border_style=cor_borda, box=box.HEAVY, padding=(1, 2))
                 )
-                time.sleep(0.35)
+                time.sleep(1.1)
 
-        # Ato 2: Caveira Hacker piscando entre vermelho e verde neon
+        # Ato 2: Caveira Hacker piscando entre vermelho e verde neon (~1.5s)
         with Live(console=self.console, refresh_per_second=10, transient=True) as live:
             for ciclo in range(6):
                 cor = "bold red" if ciclo % 2 == 0 else "bold bright_green"
@@ -210,19 +222,18 @@ class InterfaceCyberpunk:
                 live.update(
                     Panel(bloco, border_style=borda, box=box.DOUBLE, padding=(1, 2))
                 )
-                time.sleep(0.20)
+                time.sleep(0.25)
 
-        # Ato 3: Escudo Cibernético assumindo o controle + Banner Principal
+        # Ato 3: Escudo Cibernético assumindo o controle (1.3s) + Banner Principal
         with Live(console=self.console, refresh_per_second=6, transient=True) as live:
-            for estilo in ("bold cyan", "bold bright_green"):
-                bloco = Group(
-                    Align.center(Text("ATO III :: PROTOCOLO DE DEFESA INICIADO", style=estilo)),
-                    Align.center(Text(ESCUDO_CIBERNETICO, style=estilo)),
-                )
-                live.update(
-                    Panel(bloco, border_style="bright_green", box=box.DOUBLE, padding=(1, 2))
-                )
-                time.sleep(0.35)
+            bloco = Group(
+                Align.center(Text("ATO III :: PROTOCOLO DE DEFESA INICIADO", style="bold bright_green")),
+                Align.center(Text(ESCUDO_CIBERNETICO, style="bold bright_green")),
+            )
+            live.update(
+                Panel(bloco, border_style="bright_green", box=box.DOUBLE, padding=(1, 2))
+            )
+            time.sleep(1.3)
 
         self.limpar_tela()
         self.console.print(self.exibir_banner_principal())
