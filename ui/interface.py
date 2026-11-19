@@ -38,49 +38,48 @@ SUBTITULO_PROJETO = (
 )
 
 CADEADO_FECHADO = r"""
-       .--------.
-      / .------. \
-     / /        \ \
-     | |        | |
-    _| |________| |_
-  .' |_|        |_| '.
-  '._____ ____ _____.'
-  |     .'____'.     |
-  '.__.'.'    '.'.__.'
-  '.__  | LOCK |  __.'
-  |   '.'.____.'.'   |
-  '.____'.____.'____.'
-  '.________________.'
+          .--------.
+        /   .----.   \
+       |   |      |   |
+       |   |      |   |
+     __|   |______|   |__
+   .'  |___|      |___|  '.
+  |   .----------------.   |
+  |  |                  |  |
+  |  |     [ LOCK ]     |  |
+  |  |                  |  |
+   '. '----------------' .'
+     '------------------'
 """
 
-CADEADO_TRINCANDO = r"""
-       .---..---.
-      / .-/  \-. \   *
-     / /  \  /  \ \ * !
-     | |   \/   | |
-    _| |___/\___| |_  *
-  .' |_|   /\   |_| '.
-  '._____ /  \ _____.'
-  |     .'____'.     |  #
-  '.__.'.' \/ '.'.__.' *
-  '.__  | CRK! |  __.'
-  |   '.'.____.'.'   |
-  '.____'.____.'____.'
+CADEADO_RACHANDO = r"""
+          .--------.
+        /   .----.   \    *
+       |   |      |   | !
+       |   |      |   |
+     __|   |______|   |__  #
+   .'  |___|  /   |___|  '.
+  |   .------/ --------.   | *
+  |  |      /           |  |
+  |  |     [ CRK! ]     |  | !
+  |  |                  |  |
+   '. '----------------' .'
+     '------------------'
 """
 
 CADEADO_QUEBRADO = r"""
-   *     .----.        *
-    !   / .--  \  \ \   #
-   *   / /      *  \ \ !
-       | |          | |
-   *  _| |____  *___| |_ *
-    .' |_|   / /    |_| '.
-  ! '._____ / /________.'  #
-    |     .'____'.     |
-   *'.__.'.'    '.'.__.' *
-    '.__  | OPEN |  __.'
-    |   '.'.____.'.'   |
-    '.____'.____.'____.'
+          .--------.
+        /   .----.   \      *
+       |   |      |   |   !
+       |   |       '=='  #
+     __|   |______________
+   .'  |___|    / /       '.
+  |   .--------/ /-------.  |  *
+  |  |        / /         | |
+  |  |       [ OPEN ]     | |  !
+  |  |                    | |
+   '. '------------------' .'
+     '--------------------'
 """
 
 CAVEIRA_HACKER = r'''
@@ -189,7 +188,7 @@ class InterfaceCyberpunk:
         # Ato 1: Cadeado quebrando com faíscas
         quadros_cadeado = [
             (CADEADO_FECHADO, "bold cyan", "[ VERIFICANDO PORTA 0x80 :: SEGURO ]", "cyan"),
-            (CADEADO_TRINCANDO, "bold yellow", "[ ! ALERTA: TENTATIVA DE QUEBRA NA PORTA 0x80 ! ]", "yellow"),
+            (CADEADO_RACHANDO, "bold yellow", "[ ! ALERTA: TENTATIVA DE QUEBRA NA PORTA 0x80 ! ]", "yellow"),
             (CADEADO_QUEBRADO, "bold red", "[ INTRUSÃO DETECTADA NA PORTA 0x80 ]", "bright_red"),
         ]
         with Live(console=self.console, refresh_per_second=8, transient=True) as live:
@@ -202,11 +201,11 @@ class InterfaceCyberpunk:
                 live.update(
                     Panel(bloco, border_style=cor_borda, box=box.HEAVY, padding=(1, 2))
                 )
-                time.sleep(1.1)
+                time.sleep(1.5)
 
-        # Ato 2: Caveira Hacker piscando entre vermelho e verde neon (~1.5s)
+        # Ato 2: Caveira Hacker piscando entre vermelho e verde neon (~1.8s)
         with Live(console=self.console, refresh_per_second=10, transient=True) as live:
-            for ciclo in range(6):
+            for ciclo in range(7):
                 cor = "bold red" if ciclo % 2 == 0 else "bold bright_green"
                 borda = "bright_red" if ciclo % 2 == 0 else "bright_green"
                 bloco = Group(
@@ -224,7 +223,7 @@ class InterfaceCyberpunk:
                 )
                 time.sleep(0.25)
 
-        # Ato 3: Escudo Cibernético assumindo o controle (1.3s) + Banner Principal
+        # Ato 3: Escudo Cibernético assumindo o controle (1.5s) + Banner Principal
         with Live(console=self.console, refresh_per_second=6, transient=True) as live:
             bloco = Group(
                 Align.center(Text("ATO III :: PROTOCOLO DE DEFESA INICIADO", style="bold bright_green")),
@@ -233,7 +232,7 @@ class InterfaceCyberpunk:
             live.update(
                 Panel(bloco, border_style="bright_green", box=box.DOUBLE, padding=(1, 2))
             )
-            time.sleep(1.3)
+            time.sleep(1.5)
 
         self.limpar_tela()
         self.console.print(self.exibir_banner_principal())
@@ -247,47 +246,94 @@ class InterfaceCyberpunk:
         )
         time.sleep(0.5)
 
-    def efeito_matrix(self, operacao: str, duracao: float = 1.2) -> None:
-        """Exibe fluxo animado estilo Matrix com códigos hexadecimais e binários."""
-        hex_tokens = [
-            "0x7FF4", "0xDEAD", "0x00A1", "0xC0DE", "0xBEEF",
+    def efeito_matrix(self, operacao: str, duracao: float = 2.5) -> None:
+        """Exibe chuva digital Matrix em tela cheia com hexadecimais e binários caindo."""
+        tokens_todos = (
+            "0x7FF4", "0xDEAD", "0x00A1", "0x8B2F", "0xC0DE", "0xBEEF",
             "0x00FF", "0x8086", "0xCAFE", "0x1337", "0xFA12",
-        ]
-        bin_tokens = ["010110", "110010", "101001", "001111", "111000", "011011"]
+            "010110", "110010", "101001", "001111", "111000", "011011",
+        )
 
-        inicio = time.perf_counter()
-        linhas_tela = []
-        with Live(console=self.console, refresh_per_second=14, transient=True) as live:
-            while (time.perf_counter() - inicio) < duracao:
-                partes = []
-                for _ in range(7):
-                    if self._rng.random() < 0.6:
-                        partes.append(self._rng.choice(hex_tokens))
-                    else:
-                        partes.append(self._rng.choice(bin_tokens))
-                nova_linha = "  ".join(partes)
-                linhas_tela.append(nova_linha)
-                if len(linhas_tela) > 8:
-                    linhas_tela.pop(0)
+        largura_total = max(40, self.console.width)
+        altura_conteudo = max(10, self.console.height - 4)
+        largura_interna = max(24, largura_total - 4)
+        num_colunas = max(3, largura_interna // 8)
+        total_frames = max(25, min(32, int(round(duracao / 0.08))))
 
+        colunas = []
+        for _ in range(num_colunas):
+            colunas.append(
+                {
+                    "y": self._rng.randint(-altura_conteudo, altura_conteudo - 1),
+                    "cauda": self._rng.randint(4, max(5, altura_conteudo // 2)),
+                    "tokens": [
+                        self._rng.choice(tokens_todos) for _ in range(altura_conteudo)
+                    ],
+                }
+            )
+
+        self.limpar_tela()
+        with Live(
+            console=self.console, refresh_per_second=15, screen=True, transient=True
+        ) as live:
+            for _ in range(total_frames):
                 texto_matrix = Text()
-                for idx, linha in enumerate(linhas_tela):
-                    estilo = "bold bright_green" if idx >= len(linhas_tela) - 2 else "green"
-                    texto_matrix.append(linha + "\n", style=estilo)
+                for linha_idx in range(altura_conteudo):
+                    for col_idx in range(num_colunas):
+                        gota = colunas[col_idx]
+                        dist = gota["y"] - linha_idx
+                        if dist == 0:
+                            token = gota["tokens"][linha_idx]
+                            estilo = "bold bright_white"
+                        elif 1 <= dist <= 2:
+                            token = gota["tokens"][linha_idx]
+                            estilo = "bold bright_green"
+                        elif 3 <= dist <= (gota["cauda"] // 2 + 2):
+                            token = gota["tokens"][linha_idx]
+                            estilo = "green"
+                        elif 0 < dist <= gota["cauda"]:
+                            token = gota["tokens"][linha_idx]
+                            estilo = "dim cyan"
+                        else:
+                            token = "      "
+                            estilo = "green"
+
+                        texto_matrix.append(token, style=estilo)
+                        if col_idx < num_colunas - 1:
+                            texto_matrix.append("  ")
+
+                    if linha_idx < altura_conteudo - 1:
+                        texto_matrix.append("\n")
 
                 painel = Panel(
                     Align.center(texto_matrix),
                     title=f"[bold bright_green]MATRIX SCAN :: {operacao}[/]",
                     border_style="bright_green",
                     box=box.SQUARE,
+                    width=largura_total,
+                    height=altura_conteudo + 2,
                 )
                 live.update(painel)
+
+                # Avança cada gota verticalmente de cima para baixo
+                for gota in colunas:
+                    gota["y"] += 1
+                    if 0 <= gota["y"] < altura_conteudo:
+                        gota["tokens"][gota["y"]] = self._rng.choice(tokens_todos)
+                    if gota["y"] - gota["cauda"] >= altura_conteudo:
+                        gota["y"] = self._rng.randint(-6, -1)
+                        gota["cauda"] = self._rng.randint(
+                            4, max(5, altura_conteudo // 2)
+                        )
+
                 time.sleep(0.08)
 
-    def animar_ordenacao(self, nome_algoritmo: str, duracao: float = 1.5) -> None:
+        self.limpar_tela()
+
+    def animar_ordenacao(self, nome_algoritmo: str, duracao: float = 2.5) -> None:
         """Exibe animação de 20 barras verticais se ordenando com barra de progresso."""
         simbolos = (" ", "▂", "▃", "▄", "▅", "▆", "▇", "█")
-        barras = [14, 3, 19, 7, 1, 16, 11, 5, 20, 9, 2, 17, 13, 4, 18, 8, 12, 6, 15, 10]
+        barras = [18, 15, 19, 12, 20, 14, 16, 17, 10, 13, 8, 4, 9, 6, 2, 7, 11, 1, 3, 5]
         n = len(barras)
 
         progresso = Progress(
@@ -297,19 +343,22 @@ class InterfaceCyberpunk:
         )
         tarefa = progresso.add_task(f"Desfragmentando ({nome_algoritmo})", total=100)
 
-        # Pré-calcula os passos reais de ordenação por trocas manuais para animar
+        # Pré-calcula os passos reais de ordenação via Selection Sort manual (23 quadros)
         passos_animacao = []
         copia = [v for v in barras]
-        for i in range(n):
-            for j in range(0, n - i - 1):
-                if copia[j] > copia[j + 1]:
-                    passos_animacao.append(([v for v in copia], j, j + 1, False))
-                    copia[j], copia[j + 1] = copia[j + 1], copia[j]
-                    passos_animacao.append(([v for v in copia], j, j + 1, True))
+        for i in range(n - 1):
+            indice_menor = i
+            for j in range(i + 1, n):
+                if copia[j] < copia[indice_menor]:
+                    indice_menor = j
+            if indice_menor != i:
+                passos_animacao.append(([v for v in copia], i, indice_menor, False))
+                copia[i], copia[indice_menor] = copia[indice_menor], copia[i]
+                passos_animacao.append(([v for v in copia], i, indice_menor, True))
         passos_animacao.append((copia, -1, -1, True))
 
         total_quadros = len(passos_animacao)
-        atraso = max(0.015, duracao / max(total_quadros, 1))
+        atraso = max(0.10, min(0.12, duracao / max(total_quadros, 1)))
 
         def _renderizar_barras(estado_barras: list, idx_a: int, idx_b: int, trocou: bool) -> Text:
             linhas = Text()
@@ -382,7 +431,7 @@ class InterfaceCyberpunk:
                     )
                 )
                 live.update(painel)
-                time.sleep(0.28)
+                time.sleep(0.35)
         self.pausar("Alerta crítico registrado. Pressione ENTER para assumir o terminal...")
 
     @staticmethod
